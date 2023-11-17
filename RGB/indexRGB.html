@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Controle LED</title>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+<h1>Controle de la LED</h1>
+<div class="btn-container">
+
+  <form action="script3.php" method="post">
+    <button class="btn" type="submit" name="action" value="eteindre" >Eteindre</button>
+  </form>
+
+  <form action="couleur.php" method="post">
+    <button class="btn" type="submit" name="red" value="Rouge" >Rouge</button>
+  </form>
+  <form action="couleur.php" method="post">
+    <button class="btn" type="submit" name="green" value="Vert" >Vert</button>
+  </form>
+  <form action="couleur.php" method="post">
+    <button class="btn" type="submit" name="blue" value="Bleu" >Bleu</button>
+  </form>
+  
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+  GNU nano 5.4                                         htmltonisagithan.html                                                  
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Controle LED</title>
+
+</head>
+<body>
+<h1 class="centered-title">Controle de la LED</h1>
+<div class="btn-container">
+  <form action="ledRGB.php" method="post">
+    <button class="btn" type="submit" name="action" value="R" >Rouge</button>
+  </form>
+  <form action="ledRGB.php" method="post">
+    <button class="btn" type="submit" name="action" value="V" >Vert</button>
+  </form>
+  <form action="ledRGB.php" method="post">
+    <button class="btn" type="submit" name="action" value="B" >Bleu</button>
+  </form>
+  <form action="ledRGB.php" method="post">
+    <button class="btn" type="submit" name="action" value="n" >Eteindre</button>
+  </form>
+</div>
+</body>
+</html>
+
+//////////////////////////
+
+import RPi.GPIO as GPIO
+import time
+import sys
+
+# Broches pour chaque canal de couleur de la LED RGB
+rouge_pin = 17
+vert_pin = 27
+bleu_pin = 22
+
+# Configuration du mode de numérotation des broches
+GPIO.setmode(GPIO.BCM)
+
+# Configuration des broches en mode PWM
+GPIO.setup(rouge_pin, GPIO.OUT)
+GPIO.setup(vert_pin, GPIO.OUT)
+GPIO.setup(bleu_pin, GPIO.OUT)
+
+# Initialisation des objets PWM
+rouge_pwm = GPIO.PWM(rouge_pin, 100)  # Broche PWM à 100 Hz
+vert_pwm = GPIO.PWM(vert_pin, 100)
+bleu_pwm = GPIO.PWM(bleu_pin, 100)
+
+# Démarrage des PWM avec un cycle de travail de 0 (LED éteinte)
+rouge_pwm.start(0)
+vert_pwm.start(0)
+bleu_pwm.start(0)
+
+etat = sys.argv[1]
+
+# Vérifier la couleur demandée et ajuster le cycle de travail
+if etat == "R":
+        rouge_pwm.ChangeDutyCycle(100)
+
+        print("rouge")
+    
+
+elif etat == "V":
+        rouge_pwm.ChangeDutyCycle(100)
+        vert_pwm.ChangeDutyCycle(100)
+        bleu_pwm.ChangeDutyCycle(100)
+
+elif etat == "B":
+        rouge_pwm.ChangeDutyCycle(0)
+        vert_pwm.ChangeDutyCycle(0)
+        bleu_pwm.ChangeDutyCycle(100)
+
+elif etat == "n":
+        rouge_pwm.ChangeDutyCycle()
+        vert_pwm.ChangeDutyCycle(255)
+        bleu_pwm.ChangeDutyCycle(255)
+        print("n")
+
+# Attendre quelques secondes avant de terminer
+time.sleep(5)
+
+# Arrêter les PWM et réinitialiser les broches
+rouge_pwm.stop()
+vert_pwm.stop()
+bleu_pwm.stop()
+GPIO.cleanup()
+
+///////////////
+
+<?php
+
+if (isset($_POST['action'])) {
+    $action = $_POST['action'];
+
+        if ($action === 'R') {
+            exec('sudo -u www-data python /var/www/html/testtonisagithan.py R');
+
+        } elseif ($action === 'V') {
+            exec('sudo -u www-data python /var/www/html/testtonisagithan.py V');
+
+        }
+        elseif ($action === 'B') {
+            exec('sudo -u www-data python /var/www/html/testtonisagithan.py B');
+
+        }
+        elseif ($action === 'n') {
+            exec('sudo -u www-data python /var/www/html/testtonisagithan.py n');
+
+        }
+    }
+
+?>
+
+
+

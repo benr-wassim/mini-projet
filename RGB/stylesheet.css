@@ -1,0 +1,40 @@
+.centered-title {
+  text-align: center;
+}
+
+.btn-container {
+  text-align: center; 
+}
+
+
+.btn-container button {
+  padding: 10px 20px;
+  margin: 10px;
+}
+
+
+button[name="action"][value="allumer"] {
+  color: white;
+}
+
+
+button[name="action"][value="eteindre"] {
+  color: white;
+}
+
+button[name="red"][value="Rouge"]{
+  background-color: red;
+  color: white;
+}
+
+button[name="green"][value="Vert"]{
+  background-color: green;
+  color: white;
+}
+button[name="blue"][value="Bleu"]{
+  background-color: blue;
+  color: white;
+}
+
+
+

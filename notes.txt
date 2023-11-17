@@ -1,0 +1,89 @@
+led.py : allumer une led 
+led2.py : eteindre une led 
+led3.py : allumer et eteindre une led
+
+script.php : executer led.py avec bouton ON
+script2.php : executer led2.py avec bouton OFF 
+script3.php : executer led3.py (allumer et eteindre)
+
+ledRGB.py : allumer ledRGB octobre
+indexRGB.html	: site pour ledRGB boutons
+scriptRGB.php	: fichier php 
+rgb.py	: fichier python
+
+
+
+
+
+
+
+
+
+
+
+
+J'ai une page html avec 4 boutons, un bouton rouge, un vert, un bleu et un bouton eteindre, voici le code html :
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Controle LED</title>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+<body>
+<h1>Controle de la LED</h1>
+<div class="btn-container">
+
+  <form action="script3.php" method="post">
+    <button class="btn" type="submit" name="action" value="eteindre" >Eteindre</button>
+  </form>
+
+  <form action="couleur.php" method="post">
+    <button class="btn" type="submit" name="red" value="Rouge" >Rouge</button>
+  </form>
+  <form action="couleur.php" method="post">
+    <button class="btn" type="submit" name="green" value="Vert" >Vert</button>
+  </form>
+  <form action="couleur.php" method="post">
+    <button class="btn" type="submit" name="blue" value="Bleu" >Bleu</button>
+  </form>
+  
+</div>
+</body>
+</html>
+
+Et voici un code pour allumer une led rgb avec les pwm de python :
+
+import RPi.GPIO as GPIO
+import time
+
+# Configuration des broches pour le contrôle PWM
+GPIO.setmode(GPIO.BCM)  # Utilisation de la numérotation des broches BCM
+led_pins = [17, 27, 22]  # Remplacez ces valeurs par les broches que vous utilis
+ez
+
+# Configuration des broches en mode PWM
+for pin in led_pins:
+    GPIO.setup(pin, GPIO.OUT)
+
+# Création d'objets PWM pour chaque composante RGB
+led_pwm = [GPIO.PWM(pin, 100) for pin in led_pins]
+
+# Démarrage des signaux PWM avec un rapport cyclique nul (LED éteinte au départ)
+for pwm in led_pwm:
+    pwm.start(0)
+
+# Réglage de l'intensité lumineuse de chaque composante RGB
+led_pwm[0].ChangeDutyCycle(100)  # Rouge à 50 %
+led_pwm[1].ChangeDutyCycle(0)  # Vert à 75 %
+led_pwm[2].ChangeDutyCycle(100)  # Bleu à 25 %
+time.sleep(1)
+# Pour éteindre la LED RGB, mettez le rapport cyclique de toutes les broches à 0
+ %
+for pwm in led_pwm:
+    pwm.ChangeDutyCycle(0)
+
+# Nettoyage des broches GPIO
+GPIO.cleanup()
+
+Je dois aussi créer un fichier php qui lorsque l'on appuie sur le bouton bleu, il allume la led rgb en bleu, aide moi	

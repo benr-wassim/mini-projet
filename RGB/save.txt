@@ -1,0 +1,172 @@
+j'ai un fichier html, php et py j'ai quatre bouton qui chacun doit allumer une couleur de la led RGB et un bouton qui eteint la led 
+
+je veux que lorsque j'appuie sur le bouton pour allumer une couleur, je souhaite que la led reste allumer jusqu'à ce que je l'éteigne grâce au bouton éteindre et que lorsque je change de couleur en appuyant sur un autre bouton de couleur, la led change de couleur tout en restant allumer
+
+CORRIGE MOI LES ERREURS ET FAIS MOI MARCHER TOUT CA
+
+
+voici tout mes fichiers :
+
+//////////////////////////////// indexRGB.py
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Controle LED</title>
+  <link rel="stylesheet" type="text/css" href="stylesheetRGB.css">
+</head>
+<body>
+  <h1>Controle de la LED</h1>
+  <div class="btn-container">
+
+    <form action="scriptRGB.php" method="post">
+      <button class="btn" type="submit" name="color" value="R">Rouge</button>
+    </form>
+    <form action="scriptRGB.php" method="post">
+      <button class="btn" type="submit" name="color" value="V">Vert</button>
+    </form>
+    <form action="scriptRGB.php" method="post">
+      <button class="btn" type="submit" name="color" value="B">Bleu</button>
+    </form>
+
+    <form action="eteindreRGB.php" method="post">
+      <button class="btn" type="submit" name="color" value="OFF">Eteindre</button>
+    </form>
+
+  </div>
+</body>
+</html>
+
+
+
+////////////////////////////////////// scriptRGB.py
+
+<?php
+
+if (isset($_POST['color'])) {
+    $color = $_POST['color'];
+
+    if ($color === 'R' || $color === 'V' || $color === 'B') {
+        exec('sudo -u www-data python /var/www/html/ledRGB.py ' . $color);
+    } elseif ($color === 'OFF') {
+        exec('sudo -u www-data python /var/www/html/eteindreRGB.py');
+    }
+}
+
+?>
+
+
+
+//////////////////////////////////////// ledRGB.py
+
+
+
+import RPi.GPIO as GPIO
+import time
+import sys
+
+# Broches pour chaque canal de couleur de la LED RGB
+rouge_pin = 17
+vert_pin = 27
+bleu_pin = 22
+
+# Configuration du mode de numÃ©rotation des broches
+GPIO.setmode(GPIO.BCM)
+
+# Configuration des broches en mode PWM
+GPIO.setup(rouge_pin, GPIO.OUT)
+GPIO.setup(vert_pin, GPIO.OUT)
+GPIO.setup(bleu_pin, GPIO.OUT)
+
+# Initialisation des objets PWM
+rouge_pwm = GPIO.PWM(rouge_pin, 100)  # Broche PWM Ã  100 Hz
+vert_pwm = GPIO.PWM(vert_pin, 100)
+bleu_pwm = GPIO.PWM(bleu_pin, 100)
+
+# DÃ©marrage des PWM avec un cycle de travail de 0 (LED Ã©teinte)
+rouge_pwm.start(0)
+vert_pwm.start(0)
+bleu_pwm.start(0)
+
+# État actuel de la LED
+etat_actuel = None
+
+def allumer_led(couleur):
+    global etat_actuel
+    etat_actuel = couleur
+    
+    if couleur == "R":
+        rouge_pwm.ChangeDutyCycle(100)
+        vert_pwm.ChangeDutyCycle(0)
+        bleu_pwm.ChangeDutyCycle(0)
+    elif couleur == "V":
+        rouge_pwm.ChangeDutyCycle(0)
+        vert_pwm.ChangeDutyCycle(100)
+        bleu_pwm.ChangeDutyCycle(0)
+    elif couleur == "B":
+        rouge_pwm.ChangeDutyCycle(0)
+        vert_pwm.ChangeDutyCycle(0)
+        bleu_pwm.ChangeDutyCycle(100)
+    elif couleur == "OFF":
+        rouge_pwm.ChangeDutyCycle(0)
+        vert_pwm.ChangeDutyCycle(0)
+        bleu_pwm.ChangeDutyCycle(0)
+
+# Vérifier la couleur demandée et ajuster le cycle de travail
+etat = sys.argv[1]
+if etat == "OFF":
+    rouge_pwm.ChangeDutyCycle(0)
+    vert_pwm.ChangeDutyCycle(0)
+    bleu_pwm.ChangeDutyCycle(0)
+    etat_actuel = None
+elif etat in ["R", "V", "B", "n"]:
+    allumer_led(etat)
+
+# Attendre quelques secondes avant de terminer
+time.sleep(1)
+
+# ArrÃªter les PWM et rÃ©initialiser les broches
+rouge_pwm.stop()
+vert_pwm.stop()
+bleu_pwm.stop()
+GPIO.cleanup()
+
+
+
+
+//////////////////////// eteindreRGB.py
+
+import RPi.GPIO as GPIO
+
+# Configuration des broches GPIO pour la LED RGB
+red_pin = 17  # Broche GPIO pour la LED rouge
+green_pin = 27  # Broche GPIO pour la LED verte
+blue_pin = 22  # Broche GPIO pour la LED bleue
+
+# Configuration du mode de broches
+GPIO.setmode(GPIO.BCM)
+
+# Configuration des broches en tant que sortie
+GPIO.setup(red_pin, GPIO.OUT)
+GPIO.setup(green_pin, GPIO.OUT)
+GPIO.setup(blue_pin, GPIO.OUT)
+
+# Éteindre la LED en mettant toutes les broches à l'état bas (0)
+GPIO.output(red_pin, GPIO.LOW)
+GPIO.output(green_pin, GPIO.LOW)
+GPIO.output(blue_pin, GPIO.LOW)
+
+# Nettoyer la configuration des broches
+GPIO.cleanup()
+
+
+
+
+
+
+
+
+
+
+
+

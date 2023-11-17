@@ -1,0 +1,58 @@
+import RPi.GPIO as GPIO
+import time
+import sys
+
+# Broches pour chaque canal de couleur de la LED RGB
+rouge_pin = 17
+vert_pin = 27
+bleu_pin = 22
+
+# Configuration du mode de numÃ©rotation des broches
+GPIO.setmode(GPIO.BCM)
+
+# Configuration des broches en mode PWM
+GPIO.setup(rouge_pin, GPIO.OUT)
+GPIO.setup(vert_pin, GPIO.OUT)
+GPIO.setup(bleu_pin, GPIO.OUT)
+
+# Initialisation des objets PWM
+rouge_pwm = GPIO.PWM(rouge_pin, 1000)  # Broche PWM Ã  100 Hz
+vert_pwm = GPIO.PWM(vert_pin, 1000)
+bleu_pwm = GPIO.PWM(bleu_pin, 1000)
+
+# DÃ©marrage des PWM avec un cycle de travail de 0 (LED Ã©teinte)
+rouge_pwm.start(0)
+vert_pwm.start(0)
+bleu_pwm.start(0)
+
+# État actuel de la LED
+etat_actuel = None
+
+def allumer_led(couleur):
+     
+    if couleur == "R":
+        rouge_pwm.ChangeDutyCycle(100)
+        vert_pwm.ChangeDutyCycle(0)
+        bleu_pwm.ChangeDutyCycle(0)
+    elif couleur == "V":
+        rouge_pwm.ChangeDutyCycle(0)
+        vert_pwm.ChangeDutyCycle(100)
+        bleu_pwm.ChangeDutyCycle(0)
+    elif couleur == "B":
+        rouge_pwm.ChangeDutyCycle(0)
+        vert_pwm.ChangeDutyCycle(0)
+        bleu_pwm.ChangeDutyCycle(100)
+    elif couleur == "OFF":
+        rouge_pwm.ChangeDutyCycle(0)
+        vert_pwm.ChangeDutyCycle(0)
+        bleu_pwm.ChangeDutyCycle(0)
+
+# Vérifier la couleur demandée et ajuster le cycle de travail
+etat = sys.argv[1]
+allumer_led(etat)
+
+# Attendre quelques secondes avant de terminer
+time.sleep(1000)
+
+
+GPIO.cleanup()
